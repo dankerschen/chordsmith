@@ -210,6 +210,15 @@ dialog input{display:block;width:100%;margin:8px 0;background:var(--bg);border:1
 <main>
 <!-- ============ CHORDS ============ -->
 <section class="tab" id="tab-chords">
+  <h2 style="margin-top:0">Chord finder — any root, any type</h2>
+  <div class="controls">
+    <label>Root <select id="cfRoot"></select></label>
+    <label>Type <select id="cfQual"></select></label>
+    <button class="btn" id="cfRand">🎲 Random chord</button>
+  </div>
+  <div id="cfOut"></div>
+
+  <h2>Common chords</h2>
   <div class="panel">
     <div class="legend">
       <span><b>Reading a chart:</b> vertical lines are strings, low E on the left → high e on the right.</span>
@@ -221,14 +230,6 @@ dialog input{display:block;width:100%;margin:8px 0;background:var(--bg);border:1
   </div>
   <div class="chips" id="catChips"></div>
   <div class="grid" id="chordGrid"></div>
-
-  <h2>Chord finder — any root, any type</h2>
-  <div class="controls">
-    <label>Root <select id="cfRoot"></select></label>
-    <label>Type <select id="cfQual"></select></label>
-    <button class="btn" id="cfRand">🎲 Random chord</button>
-  </div>
-  <div id="cfOut"></div>
 </section>
 
 <!-- ============ PROGRESSIONS ============ -->
