@@ -1,7 +1,18 @@
 # Fretwise — guitar chord, progression & scale trainer
 
-A single-page guitar learning tool: chord charts, progressions, scales and modes, practice games and a random drill.
-Open `index.html` in a browser to use it. Progress is saved in that browser.
+A single-page guitar learning tool. Live at <https://dankerschen.github.io/fretwise/>.
+
+- **Chord charts** — chord finder for any root and type, with CAGED shapes, arpeggio map and triad inversions across the neck.
+- **Progressions** — common progressions in any key, strumming patterns, capo (manual or automatic), a transposer with capo suggestions, and a backing track (drums + bass) with the scale to solo with.
+- **Scales** — scales and the seven modes on the fretboard.
+- **Practice** — chord-name quiz and one-minute chord changes.
+- **Drill** — random chords, scales, progressions, fretboard notes and ear training (chord types, intervals, chord changes), with weak spots coming up more often.
+- **Tuner** — microphone tuner with standard and alternate tunings.
+- **Progress** — practice streak, calendar, drill results and chord-change scores over time.
+
+Open `index.html` in a browser to use it; progress is then saved in that browser. On the live site it can be installed as an app (📲 **Install** in the header, or **Share → Add to Home Screen** on iPhone) and works offline. The tuner needs the live site or the installed app, because browsers only allow the microphone over https.
+
+The site files are `index.html`, `firebase-config.js`, `manifest.webmanifest`, `sw.js` (offline support) and the `icons/` folder.
 
 To let friends use it from anywhere, each with their own saved progress, host it on GitHub Pages and connect a free Firebase project. One-time setup, about 15–20 minutes.
 
@@ -36,8 +47,9 @@ The free Spark plan covers this comfortably: up to 50k document reads and 20k wr
 ## How saving works
 
 - **Not signed in:** progress is saved in that browser only.
-- **Signed in:** drill ratings and best chord-change scores are saved to the person's account and follow them to any device. Settings such as theme and note names stay per device.
+- **Signed in:** drill ratings, best chord-change scores and the practice log (for the Progress tab) are saved to the person's account and follow them to any device. Settings such as theme and note names stay per device.
 - On the first sign-in in a browser, the tool offers to add any progress already made there to the account.
+- **Offline:** a signed-in person's progress is kept on the device and synced when the connection returns. If it can't be loaded at all, progress is saved in the browser and offered to the account next time, so the cloud copy is never overwritten.
 - Signing out on a shared computer leaves no account data behind in that browser.
 
 ## Testing sign-in
