@@ -1,10 +1,10 @@
-// Fretwise service worker: makes the app installable and usable offline.
+// Chordsmith service worker: makes the app installable and usable offline.
 // The app's own files are fetched from the network first (so updates show up straight away) and
 // fall back to the cached copy offline. The Firebase libraries are cached on first use.
 // Sign-in and saving go straight to Firebase and are never cached here.
-const CACHE = 'fretwise-v1';
+const CACHE = 'chordsmith-v1';   // a new name also clears the old cache (old icons) on update
 const SHELL = ['./', './index.html', './firebase-config.js', './manifest.webmanifest',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
+  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo-72.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

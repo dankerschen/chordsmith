@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fretwise Guitar Trainer</title>
+<title>Chordsmith Guitar Trainer</title>
 <meta name="description" content="Guitar chords, progressions, scales, tuner and practice drills.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#c8641e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Fretwise">
+<meta name="apple-mobile-web-app-title" content="Chordsmith">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 :root{
@@ -291,7 +291,7 @@ dialog input{display:block;width:100%;margin:8px 0;background:var(--bg);border:1
 </head>
 <body>
 <header class="top">
-  <div class="brand"><div class="logo">♪</div><div><h1>Fretwise</h1><p>Chords · Progressions · Scales</p></div></div>
+  <div class="brand"><img class="logo" src="icons/logo-72.png" alt="" width="36" height="36"><div><h1>Chordsmith</h1><p>Chords · Progressions · Scales</p></div></div>
   <nav class="tabs" id="tabs">
     <button data-tab="chords">Chord charts</button>
     <button data-tab="progressions">Progressions</button>
@@ -301,7 +301,7 @@ dialog input{display:block;width:100%;margin:8px 0;background:var(--bg);border:1
     <button data-tab="tuner">Tuner</button>
     <button data-tab="progress">Progress</button>
   </nav>
-  <button class="btn" id="installBtn" hidden title="Install Fretwise as an app">📲 Install</button>
+  <button class="btn" id="installBtn" hidden title="Install Chordsmith as an app">📲 Install</button>
   <button class="btn" id="acctBtn" hidden>Sign in</button>
   <select id="namesSel" title="Note names"><option value="en">C D E</option><option value="fr">Do Ré Mi</option></select>
   <button class="icon-btn" id="themeBtn" title="Toggle light/dark">◐</button>
@@ -613,14 +613,14 @@ dialog input{display:block;width:100%;margin:8px 0;background:var(--bg);border:1
 
 <dialog id="installDlg">
   <form method="dialog" class="dlg-close"><button class="icon-btn" aria-label="Close">✕</button></form>
-  <h3>Install Fretwise</h3>
+  <h3>Install Chordsmith</h3>
   <p class="small">On iPhone or iPad, in <b>Safari</b>:</p>
   <ol class="small">
     <li>Tap the <b>Share</b> button (the square with an arrow).</li>
     <li>Scroll down and tap <b>Add to Home Screen</b>.</li>
     <li>Tap <b>Add</b>.</li>
   </ol>
-  <p class="small muted">Fretwise then opens from its own icon, full screen, and works without Wi-Fi.</p>
+  <p class="small muted">Chordsmith then opens from its own icon, full screen, and works without Wi-Fi.</p>
 </dialog>
 
 <dialog id="acctDlg">
@@ -921,8 +921,19 @@ document.addEventListener('click', e => {
 
 /* ================= Helpers ================= */
 const $ = s => document.querySelector(s);
-const store = (k, v) => { try { localStorage.setItem('fretwise.'+k, JSON.stringify(v)); } catch(e){} };
-const load = (k, d) => { try { const v = localStorage.getItem('fretwise.'+k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } };
+// Everything this app keeps in the browser is stored under keys starting with KEY_PREFIX
+const KEY_PREFIX = 'chordsmith.';
+// One-time move from the app's old name: data saved as fretwise.* becomes chordsmith.* (never overwriting newer data)
+try {
+  Object.keys(localStorage).filter(k => k.startsWith('fretwise.')).forEach(old => {
+    const k = KEY_PREFIX + old.slice('fretwise.'.length);
+    if (localStorage.getItem(k) == null) localStorage.setItem(k, localStorage.getItem(old));
+    localStorage.removeItem(old);
+  });
+} catch(e){}
+const store = (k, v) => { try { localStorage.setItem(KEY_PREFIX + k, JSON.stringify(v)); } catch(e){} };
+const load = (k, d) => { try { const v = localStorage.getItem(KEY_PREFIX + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } };
+const forget = k => { try { localStorage.removeItem(KEY_PREFIX + k); } catch(e){} };
 const fillSelect = (sel, items, val) => { sel.innerHTML = items.map(([v,l]) => `<option value="${v}">${l}</option>`).join(''); if (val != null) sel.value = val; };
 const remap = (root, list) => list.find(r => parse(r).pc === parse(root).pc);
 const shuffle = a => { for (let i = a.length-1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
@@ -931,7 +942,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', 
 /* ================= Progress storage =================
    Guests: progress lives in this browser (localStorage).
    Signed in: progress lives in the user's cloud document; the Firebase module at the end of the page
-   calls Fretwise.setAccount() with the loaded data and a save function. Settings always stay local.
+   calls Chordsmith.setAccount() with the loaded data and a save function. Settings always stay local.
    If a signed-in account's progress couldn't be loaded (offline, nothing cached yet), it is called with
    no save function: progress then goes to this browser, and is offered to the account on the next load. */
 const PROGRESS_KEYS = ['drillStats', 'best', 'log'];
@@ -991,7 +1002,7 @@ function setAccount(user, data, saveFn){
   clearTimeout(saveTimer); saveTimer = null;
   if (user && !saveFn){
     Object.assign(account, { user, data:{}, saveFn:null, status:'Offline — progress is being saved on this device until you’re back online' });
-    try { localStorage.removeItem('fretwise.guestAsked.' + user.uid); } catch(e){}   // offer to add it to the account later
+    forget('guestAsked.' + user.uid);   // offer to add it to the account later
   } else if (user){
     Object.assign(account, { user, data: data || {}, saveFn, status:'All progress saved' });
     // Progress made in this browser before signing in: offer (once per account) to bring it along
@@ -1001,7 +1012,7 @@ function setAccount(user, data, saveFn){
       store('guestAsked.' + user.uid, true);
       if (confirm(`Add the progress saved in this browser to ${user.name}'s account?`)){
         account.data = mergeProgress(account.data, guest);
-        PROGRESS_KEYS.forEach(k => { try { localStorage.removeItem('fretwise.' + k); } catch(e){} });
+        PROGRESS_KEYS.forEach(forget);
         queueSave();
       }
     }
@@ -1042,8 +1053,8 @@ function renderAccount(){
 }
 $('#acctBtn').addEventListener('click', () => { $('#acctDlg').showModal(); renderAccount(); });
 $('#acctBody').addEventListener('click', async e => {
-  const b = e.target.closest('[data-act]'); if (!b || !window.FretwiseCloud) return;
-  const cloud = window.FretwiseCloud, act = b.dataset.act, email = $('#acEmail')?.value.trim(), pass = $('#acPass')?.value;
+  const b = e.target.closest('[data-act]'); if (!b || !window.ChordsmithCloud) return;
+  const cloud = window.ChordsmithCloud, act = b.dataset.act, email = $('#acEmail')?.value.trim(), pass = $('#acPass')?.value;
   const msg = (t, ok) => { const m = $('#acMsg'); if (m){ m.textContent = t; m.style.color = ok ? 'var(--good)' : 'var(--bad)'; } };
   try {
     if (act === 'google') await cloud.signInGoogle();
@@ -1057,7 +1068,7 @@ $('#acctBody').addEventListener('click', async e => {
     msg(AUTH_ERRORS[err.code] || 'Something went wrong: ' + (err.message || err));
   }
 });
-window.Fretwise = { setAccount, cloudReady(){ account.available = true; renderAccount(); } };
+window.Chordsmith = { setAccount, cloudReady(){ account.available = true; renderAccount(); } };
 
 /* ================= Tabs & theme ================= */
 function showTab(t){
@@ -1883,7 +1894,7 @@ function renderProgress(){
     <div class="stat"><b>${st.cur} 🔥</b><span>day streak</span><small>${st.today ? 'Done for today ✓' : st.cur ? 'Practise today to keep it going' : 'Practise today to start one'}</small></div>
     <div class="stat"><b>${st.longest}</b><span>longest streak</span></div>
     <div class="stat"><b>${days30}</b><span>days practised</span><small>in the last 30 days</small></div>
-    <div class="stat"><b>${fmtMins(weekMins)}</b><span>this week</span><small>time with Fretwise open and in use</small></div>`;
+    <div class="stat"><b>${fmtMins(weekMins)}</b><span>this week</span><small>time with Chordsmith open and in use</small></div>`;
   $('#pgWho').textContent = inCloud() ? `Signed in as ${account.user.name} — your progress follows you to every device.`
     : account.user ? account.status : 'Saved in this browser only. Sign in to keep your progress on every device.';
 
@@ -2536,7 +2547,7 @@ if (cfg && location.protocol !== 'file:'){
     // Keep a copy of each user's progress on the device so the app also works offline
     let db;
     try { db = F.initializeFirestore(app, { localCache: F.persistentLocalCache() }); } catch(e){ db = F.getFirestore(app); }
-    window.FretwiseCloud = {
+    window.ChordsmithCloud = {
       signInGoogle: () => A.signInWithPopup(auth, new A.GoogleAuthProvider()),
       signInEmail: (email, pass) => A.signInWithEmailAndPassword(auth, email, pass),
       signUpEmail: (email, pass) => A.createUserWithEmailAndPassword(auth, email, pass),
@@ -2544,7 +2555,7 @@ if (cfg && location.protocol !== 'file:'){
       signOut: () => A.signOut(auth),
     };
     A.onAuthStateChanged(auth, async u => {
-      if (!u) return Fretwise.setAccount(null);
+      if (!u) return Chordsmith.setAccount(null);
       // One private document per user: users/{uid} → { progress, updatedAt }
       const ref = F.doc(db, 'users', u.uid);
       const user = { uid:u.uid, name:u.displayName || u.email || 'You' };
@@ -2553,11 +2564,11 @@ if (cfg && location.protocol !== 'file:'){
       catch(e){
         // Never save over the cloud copy with progress we couldn't load: keep it on this device instead
         console.warn('Could not load progress', e);
-        return Fretwise.setAccount(user, null, null);
+        return Chordsmith.setAccount(user, null, null);
       }
-      Fretwise.setAccount(user, progress, data => F.setDoc(ref, { progress:data, updatedAt:F.serverTimestamp() }, { merge:true }));
+      Chordsmith.setAccount(user, progress, data => F.setDoc(ref, { progress:data, updatedAt:F.serverTimestamp() }, { merge:true }));
     });
-    Fretwise.cloudReady();
+    Chordsmith.cloudReady();
   } catch(e){ console.warn('Cloud sign-in unavailable — using this browser only.', e); }
 }
 </script>

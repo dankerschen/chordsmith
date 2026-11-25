@@ -1,6 +1,6 @@
-# Fretwise — guitar chord, progression & scale trainer
+# Chordsmith — guitar chord, progression & scale trainer
 
-A single-page guitar learning tool. Live at <https://dankerschen.github.io/fretwise/>.
+A single-page guitar learning tool. Live at <https://dankerschen.github.io/chordsmith/>.
 
 - **Chord charts** — chord finder for any root and type, with CAGED shapes, arpeggio map and triad inversions across the neck.
 - **Progressions** — common progressions in any key, strumming patterns, capo (manual or automatic), a transposer with capo suggestions, and a backing track (drums + bass) with the scale to solo with.

@@ -1,6 +1,6 @@
 {
-  "name": "Fretwise Guitar Trainer",
-  "short_name": "Fretwise",
+  "name": "Chordsmith Guitar Trainer",
+  "short_name": "Chordsmith",
   "description": "Guitar chords, progressions, scales, tuner and practice drills.",
   "id": "./",
   "start_url": "./",
