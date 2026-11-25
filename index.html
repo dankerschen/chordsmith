@@ -2251,8 +2251,10 @@ function renderStage(){
   $('#rdMain').textContent = !ds.running ? '▶ Start session' : !timed ? (ds.revealed ? 'Next ⏭' : 'Reveal') : ds.paused ? '▶ Resume' : '⏸ Pause';
   document.querySelectorAll('#rdRate [data-r]').forEach(b => b.classList.toggle('chosen', b.dataset.r === ds.rated));
   $('#rdCount').textContent = ds.running ? `Item ${ds.n}${len ? ' of ' + len : ''}${ds.paused ? ' · paused' : ''}` : '';
-  $('#rdUpNext').textContent = ds.running && timed && ds.next ? `Up next: ${itemTitle(ds.next)}` : '';
-  $('#rdHistory').innerHTML = ds.history.slice(-30).map(h => `<span class="${h.r || ''}">${itemTitle(h.it)}</span>`).join('');
+  // An ear item's title is its answer: keep it hidden until it has been answered (or has gone by)
+  const secret = (it, h) => it.kind === 'ear' && (!h || (!h.r && it === ds.cur));
+  $('#rdUpNext').textContent = ds.running && timed && ds.next ? `Up next: ${secret(ds.next) ? '👂 Ear training' : itemTitle(ds.next)}` : '';
+  $('#rdHistory').innerHTML = ds.history.slice(-30).map(h => `<span class="${h.r || ''}">${secret(h.it, h) ? '👂 ?' : itemTitle(h.it)}</span>`).join('');
   if (!ds.running || !ds.cur) return;
   if (ds.cur.kind === 'ear'){ $('#rdOut').innerHTML = earHTML(ds.cur); return; }
   const v = itemView(ds.cur);
